@@ -3,7 +3,6 @@
     <head>
         <title>EL-Project</title>
         <link rel="stylesheet" href="style.css">
-        <script src="script.js"></script>
     </head>
     <body>
         <div class="home">
@@ -54,5 +53,30 @@
                 </div>
             </div>
         </div>
+        <script type="module">
+            // Import the functions you need from the SDKs you need
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
+            // TODO: Add SDKs for Firebase products that you want to use
+            // https://firebase.google.com/docs/web/setup#available-libraries
+
+            // Your web app's Firebase configuration
+            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+            const firebaseConfig = {
+                apiKey: "AIzaSyDPzLrBq7b8_cjT4eZEza6rTj733jAMZHs",
+                authDomain: "el-1stsem.firebaseapp.com",
+                databaseURL: "https://el-1stsem-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "el-1stsem",
+                storageBucket: "el-1stsem.firebasestorage.app",
+                messagingSenderId: "453379741436",
+                appId: "1:453379741436:web:980b06c6e38ad11f7b6979",
+                measurementId: "G-VX23DZ45B9"
+            };
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const analytics = getAnalytics(app);
+        </script>
+        <script src="script.js"></script>
     </body>
 </html>

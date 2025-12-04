@@ -44,7 +44,7 @@ body {
     flex-direction: column;
     gap: 10px;
     font-size: 25px;
-    flex-wrap: 1;
+    
     color:#4a5568;
 }
 .in input {
@@ -94,6 +94,7 @@ body {
     font-size: 35px;
     font-weight: 700;
     font-family: 'Roboto',sans-serif;
+    padding-bottom: 20px;
 }
 .battery {
     flex-grow: 0.40;
