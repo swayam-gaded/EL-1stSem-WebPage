@@ -13,19 +13,37 @@
         <div class="input">
             <div class="heading">Input</div>
             <form>
-                <div class="in">
-                    <label>Target Battery (%)</label>
-                    <input type="number" placeholder="ex: 80">
+                <div class="details">
+                    <div class="in">
+                        <label>Target Battery (%)</label>
+                        <input type="number" placeholder="ex: 80">
+                    </div>
+                    <div class="in">
+                        <label>Charging_Power</label>
+                        <input type="text" placeholder="ex: 7.7kWh">
+                    </div>
+                    <div class="in">
+                        <label>Time(24hr clock)</label>  
+                        <input type="text" placeholder="ex: 1350">
+                    </div>
                 </div>
-                <div class="in">
-                    <label>Charging_Power</label>
-                    <input type="text" placeholder="ex: 7.7kWh">
-                </div>
-                <div class="in">
-                    <label>Time(24hr clock)</label>  
-                        <input type="text" placeholder="ex: 1350"></div>
+                <button class="submit">Start the program.</button>
             </form>
         </div>
-        <div class="output"></div>
+        <div class="output">
+            <div class="live">Live Monitoring</div>
+            <div class="actual">
+                <div class="battery">
+                    <div class="name">Current Battery Level</div>
+                    <div class="box">0%</div>
+                </div>
+                <div class="load">
+
+                </div>
+                <div class="time">
+
+                </div>
+            </div>
+        </div>
     </body>
 </html>
