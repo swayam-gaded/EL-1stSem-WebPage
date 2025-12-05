@@ -26,6 +26,7 @@ window.onload = function() {
 
 // Input to Database function 
 function inputToDB() {
+    if(event) event.preventDefault();
     // to get the values from the website
     const targetSoc = document.getElementById('target-soc').value;
     const chargePower = document.getElementById('charging-power').value;
@@ -59,13 +60,13 @@ function outputToWeb() {
     // gets real time load data from the microprocessor
     metricsRef.child('total_house_load_amps').on('value', (snapshot) => {
         const currentLoad = snapshot.val(); // e.g., 5.23
-        document.getElementById('curr-load').textContent = `${currentLoad ? currentLoad.toFixed(2) : '0.00'} Amps`;
+        document.getElementById('curr-load').textContent = `${currentLoad ? currentLoad.toFixed(2) : '0.00'}`;
     });
 
     // waits on for algo to make its decision done on microprocessor and sends tht to charger status node
     systemStateRef.child('charger_status').on('value', (snapshot) => {
         const status = snapshot.val();
-        const statusElement = document.getElementById('curr-battery');
+        const statusElement = document.getElementById('status');
         statusElement.textContent = status || 'N/A';
         
         // to tell if it is charging has started or not visually
