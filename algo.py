@@ -13,7 +13,7 @@ firebase_admin.initialize_app(cred, {
 
 def calculate_charging_decision(data):
     
-
+# Gets all the input from the database
     current_soc = data["current_soc"]
     target_soc = data["target_soc"]
     battery_capacity = data["battery_capacity"]
@@ -35,7 +35,7 @@ def calculate_charging_decision(data):
     time_left_hours = (departure_dt - now).total_seconds() / 3600
 
     # ------------------------
-    # Energy required (in same units)
+    # this part calculates the energy needed using the SoC values
     # ------------------------
     soc_needed = target_soc - current_soc
     if soc_needed < 0:
@@ -50,19 +50,20 @@ def calculate_charging_decision(data):
         time_required_hours = 9999  # avoids division by zero
 
     # ------------------------
-    # Rule 1: Check grid load safety
-    # ------------------------
-    if current_load > safety_margin:
-        return "STOP_CHARGING (Grid Overload Protection)"
-
-    # ------------------------
-    # Rule 2: Check if urgent charging required
+    # Rule 1: Check if departure is too soon to complete charging and starts charging immediately if yes
     # ------------------------
     if time_required_hours > time_left_hours:
         return "START_CHARGING_IMMEDIATELY (Not Enough Time Before Departure)"
 
     # ------------------------
-    # Rule 3: Normal conditions
+    # Rule 2: checking whether the grid is overloaded and if yes, then stop charging
+    # ------------------------
+    if current_load > safety_margin:
+        return "STOP_CHARGING (Grid Overload Protection)"
+
+    # ------------------------
+    # Rule 3: Normal Charging Decision
+    # As the code repeats every 3 seconds, it will keep checking and charging until target SoC is reached and sends a STOP signal 
     # ------------------------
     if current_soc < target_soc:
         return "CHARGE"
@@ -90,7 +91,7 @@ def start_scheduler():
 
             print("Decision:", decision)
 
-        time.sleep(3)  # repeat every 3 seconds
+        time.sleep(3)  # It runs the code every 3 seconds to calculate real-time decisions
 
 
 if __name__ == "__main__":
