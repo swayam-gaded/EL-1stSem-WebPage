@@ -38,15 +38,15 @@ function inputToDB() {
     }
 
    /* to send the data to DB and output the result 
-    --> */ 
+   --> .set is a function that is derived from the db libraries which were pulled from 
+        script in html file.*/ 
     userInputsRef.set({
-        target_soc_level: parseFloat(targetSoc),
+        target_soc_level: parseInt(targetSoc),
         charger_rate_kw: parseFloat(chargePower),
         departure_time: departureTime,
     })
     .then(() => {
         alert("Schedule Saved Successfully!");
-        // Optional: Reset input fields or give visual confirmation
     })
     .catch((error) => {
         console.error("Firebase Write Error:", error);
@@ -54,65 +54,64 @@ function inputToDB() {
     });
 }
 
-// --- Function to Listen to Firebase for Real-Time Changes ---
-function startOutputListeners() {
-    // 1. Listen for Load (Written by ESP32)
+// to display the output part of the website 
+function outputToWeb() {
+    // gets real time load data from the microprocessor
     metricsRef.child('total_house_load_amps').on('value', (snapshot) => {
         const currentLoad = snapshot.val(); // e.g., 5.23
-        document.getElementById('current-load-display').textContent = `${currentLoad ? currentLoad.toFixed(2) : '0.00'} Amps`;
+        document.getElementById('curr-load').textContent = `${currentLoad ? currentLoad.toFixed(2) : '0.00'} Amps`;
     });
 
-    // 2. Listen for Charging Status (Written by ESP32 Logic)
+    // waits on for algo to make its decision done on microprocessor and sends tht to charger status node
     systemStateRef.child('charger_status').on('value', (snapshot) => {
-        const status = snapshot.val(); // e.g., "CHARGE" or "WAIT"
-        const statusElement = document.getElementById('charger-status-display');
+        const status = snapshot.val();
+        const statusElement = document.getElementById('curr-battery');
         statusElement.textContent = status || 'N/A';
         
-        // Add visual feedback based on status
+        // to tell if it is charging has started or not visually
         if (status === 'CHARGE') {
-            statusElement.style.backgroundColor = '#4CAF50'; // Green
+            statusElement.style.backgroundColor = '#4CAF50'; 
         } else if (status === 'WAIT') {
-            statusElement.style.backgroundColor = '#FFC107'; // Yellow
+            statusElement.style.backgroundColor = '#FFC107'; 
         } else {
             statusElement.style.backgroundColor = 'lightgray';
         }
     });
     
-    // 3. Listen for Phone's SoC (Written by the phone's browser, needed for display on laptop)
+    // to display the current battery level from the phone function 
     metricsRef.child('phone_soc').on('value', (snapshot) => {
         const phoneSoc = snapshot.val();
-        document.getElementById('current-battery-display').textContent = `${phoneSoc || '--'}%`;
+        document.getElementById('curr-battery').textContent = `${phoneSoc || '--'}%`;
     });
 }
 
-// --- Logic for Phone-Specific Tasks (Runs ONLY on the phone's browser) ---
-function checkAndStartPhoneLogic() {
-    // Check if the browser supports the Battery Status API
+// to get battery level from phone 
+function phoneBattery() {
+    /* navigator is the built-in js object that represents the browser and the website it is running on
+      --> battery in the .then is the object or the promise given from the getBattery() function */
     if ("getBattery" in navigator) {
         navigator.getBattery().then((battery) => {
             
-            // Function to upload the battery status to Firebase
+            // to upload battery level to db
             const uploadBatteryStatus = () => {
                 const level = Math.round(battery.level * 100);
-                
-                // Write data to the 'realtime_metrics' path
+                // to enter the value
                 metricsRef.child('phone_soc').set(level); 
             };
-            
-            // 1. Upload initial status
+            // to call the above function
             uploadBatteryStatus();
 
-            // 2. Set listener to upload status every time the level changes
+            // the levelchange is monitored by the OS of the phone which updates it whenever its battery changes
             battery.addEventListener('levelchange', uploadBatteryStatus);
             
-            // Optional: You can also set a timer to upload every 5 minutes regardless of change
+            // this is so tht the uploadBatteryStatus function is called even when the event levelchange does not happen
             setInterval(uploadBatteryStatus, 300000); // 5 minutes in milliseconds
             
         }).catch(error => {
             console.warn("Battery API error/blocked:", error);
             // Fallback for debugging if the browser blocks it
             metricsRef.child('phone_soc').set("API_Blocked");
-        });
+        }); 
     }
 }
 
