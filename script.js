@@ -1,52 +1,56 @@
-// --- Global Setup (Assumes 'database' object is available from HTML) ---
+// database is the variable that was declared on the script tag of the html file 
 
-// Get references to the specific database paths
-// These paths are where the ESP32 will WRITE to and where the Laptop/Phone will WRITE to
+/*These below variables are just pointers to their respective nodes on the database 
+    --> EV_Schedule is my root node on the database 
+    --> user_inputs, realtime_metrics, system_state are the sub nodes of the root node 
+    --> if these nodes are not present then it will show no such node is created */
 const userInputsRef = database.ref('EV_Schedule/user_inputs');
 const metricsRef = database.ref('EV_Schedule/realtime_metrics');
 const systemStateRef = database.ref('EV_Schedule/system_state');
 
-// This function runs when the page loads
-window.onload = function() {
-    // 1. ATTACH INPUT HANDLERS (Connect the button to the function)
-    const saveButton = document.getElementById('save-schedule-button'); // Ensure your button has this ID!
-    if (saveButton) {
-        saveButton.addEventListener('click', sendInputsToDB); // When clicked, run the input function
-    }
 
-    // 2. START REAL-TIME LISTENERS (Update the output region)
-    startOutputListeners();
-    
-    // 3. START PHONE-SPECIFIC LOGIC (Only runs if the device can check battery)
-    checkAndStartPhoneLogic(); 
+/*window.onload is a function where window is your entire webpage and onload allows the
+  function defined below it to run only after every file is loaded. */
+window.onload = function() {
+    // saveButton gives a truthy value if it finds the element and it's type is of an object
+    const saveButton = document.getElementById('start-button');
+    if (saveButton) {
+        // this calls the function when click event happens 
+        saveButton.addEventListener('click', inputToDB);
+    }
+    // calls the output function
+    outputToWeb();
+    // calls the battery of phone function
+    phoneBattery(); 
 };
 
-// --- Function to Write Inputs to Firebase ---
-function sendInputsToDB() {
-    // 1. Get values from the Input Region (Ensure IDs match your HTML input fields)
-    const targetSoc = document.getElementById('target-soc-input').value;
-    const chargePower = document.getElementById('charging-power-input').value; // Added Charge Power input
-    const departureTime = document.getElementById('departure-time-input').value;
+// Input to Database function 
+function inputToDB() {
+    // to get the values from the website
+    const targetSoc = document.getElementById('target-soc').value;
+    const chargePower = document.getElementById('charging-power').value;
+    const departureTime = document.getElementById('departure-time').value;
 
-    // Basic Input Validation (Crucial for first-semester code!)
+    //to check if every value is inputted 
     if (!targetSoc || !chargePower || !departureTime) {
         alert("Please fill all input fields.");
         return; 
     }
 
-    // 2. Write data to the /user_inputs path
+   /* to send the data to DB and output the result 
+    --> */ 
     userInputsRef.set({
         target_soc_level: parseFloat(targetSoc),
         charger_rate_kw: parseFloat(chargePower),
         departure_time: departureTime,
     })
     .then(() => {
-        alert("Schedule Sent to ESP32 Successfully!");
+        alert("Schedule Saved Successfully!");
         // Optional: Reset input fields or give visual confirmation
     })
     .catch((error) => {
         console.error("Firebase Write Error:", error);
-        alert("Error saving schedule. Check console.");
+        alert("Error saving schedule. Resolve the issue!!");
     });
 }
 
@@ -111,3 +115,4 @@ function checkAndStartPhoneLogic() {
         });
     }
 }
+

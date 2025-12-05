@@ -15,18 +15,18 @@
                 <div class="details">
                     <div class="in">
                         <label>Target Battery (%)</label>
-                        <input type="number" placeholder="ex: 80">
+                        <input type="number" placeholder="ex: 80" id="target-soc">
                     </div>
                     <div class="in">
                         <label>Charging_Power</label>
-                        <input type="text" placeholder="ex: 7.7kWh">
+                        <input type="text" placeholder="ex: 7.7kWh" id="charging-power">
                     </div>
                     <div class="in">
                         <label>Time(24hr clock)</label>  
-                        <input type="text" placeholder="ex: 1350">
+                        <input type="text" placeholder="ex: 1350" id="departure-time">
                     </div>
                 </div>
-                <button class="submit">Start the program.</button>
+                <button class="submit" id="start-button">Start the program.</button>
             </form>
         </div>
         <div class="output">
@@ -34,14 +34,14 @@
             <div class="actual">
                 <div class="battery">
                     <div class="name">Current Battery Level</div>
-                    <div class="box">0%</div>
+                    <div class="box" id="curr-battery">0%</div>
                 </div>
                 <div class="load">
                     <div class="name">Current Load</div>
                     <div class="gauge">
                         <div class="circle">
                             <div class="inner">
-                                <div class="value">0</div>
+                                <div class="value" id="curr-load">0</div>
                                 <div class="unit">kW</div>
                             </div>
                         </div>
@@ -49,34 +49,45 @@
                 </div>
                 <div class="time">
                     <div class="name">Time Required</div>
-                    <div class="box">1:20:56</div>
+                    <div class="box" id="time-required">1:20:56</div>
                 </div>
             </div>
         </div>
-        <script type="module">
-            // Import the functions you need from the SDKs you need
-            import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
-            import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-analytics.js";
-            // TODO: Add SDKs for Firebase products that you want to use
-            // https://firebase.google.com/docs/web/setup#available-libraries
 
-            // Your web app's Firebase configuration
-            // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-            const firebaseConfig = {
-                apiKey: "AIzaSyDPzLrBq7b8_cjT4eZEza6rTj733jAMZHs",
-                authDomain: "el-1stsem.firebaseapp.com",
-                databaseURL: "https://el-1stsem-default-rtdb.asia-southeast1.firebasedatabase.app",
-                projectId: "el-1stsem",
-                storageBucket: "el-1stsem.firebasestorage.app",
-                messagingSenderId: "453379741436",
-                appId: "1:453379741436:web:980b06c6e38ad11f7b6979",
-                measurementId: "G-VX23DZ45B9"
-            };
 
-            // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
-            const analytics = getAnalytics(app);
+        <!--LINKING OF DATABASE AND JAVASCRIPT FILE-->
+        <!-- 1. Load the Firebase Compat Libraries (App and Database) -->
+        <!-- These create a global 'firebase' variable that works everywhere -->
+        <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-database-compat.js"></script>
+
+        <script>
+        // 2. Your Configuration (Keep your keys!)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDPzLrBq7b8_cjT4eZEza6rTj733jAMZHs",
+            authDomain: "el-1stsem.firebaseapp.com",
+            databaseURL: "https://el-1stsem-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "el-1stsem",
+            storageBucket: "el-1stsem.firebasestorage.app",
+            messagingSenderId: "453379741436",
+            appId: "1:453379741436:web:980b06c6e38ad11f7b6979",
+            measurementId: "G-VX23DZ45B9"
+        };
+
+        // 3. Initialize Firebase (Global)
+        firebase.initializeApp(firebaseConfig);
+
+        // 4    . DECLARE THE DATABASE VARIABLE HERE
+        // This line creates the 'database' object that your script.js is looking for!
+        const database = firebase.database(); 
+    
+        console.log("Firebase Database Initialized:", database);
         </script>
+
+        <!-- 5. NOW link your script.js -->
         <script src="script.js"></script>
+
+
+
     </body>
 </html>
